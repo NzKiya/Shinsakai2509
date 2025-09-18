@@ -10,10 +10,30 @@ public class PuzzleManager : MonoBehaviour
     [SerializeField] GameObject[] Fruits = new GameObject[5];
     int _width = 10;
     int _height = 8;
+
     GameObject[,] _puzzleBoard = new GameObject[10, 8];
+    public GameObject[,] PuzzleBoard
+    {
+        set { _puzzleBoard = value; }
+        get { return _puzzleBoard; }
+    }
 
-    [SerializeField] GameObject _cursor;
+    [SerializeField] GameObject _cursorPrefab;
+    GameObject _cursor = default;
 
+
+        // Start is called before the first frame update
+        void Start()
+    {
+        ResetPuzzle();
+        _cursor = Instantiate(_cursorPrefab, this.transform);
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        
+    }
 
     void ResetPuzzle()
     {
@@ -41,16 +61,4 @@ public class PuzzleManager : MonoBehaviour
         //}
     }
 
-        // Start is called before the first frame update
-        void Start()
-    {
-        ResetPuzzle();
-        Instantiate(_cursor, this.transform);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

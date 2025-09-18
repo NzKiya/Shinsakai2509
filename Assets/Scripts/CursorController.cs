@@ -8,10 +8,20 @@ public class CursorController : MonoBehaviour
     SpriteRenderer _sr = default;
     int _clicked = 1;
 
+    //GameObject _pmObj = default;
+    //PuzzleManager _puzzleManager = default;
+    Collider2D _collider;
+    int _moveX = 0;
+    int _moveY = 0;
+
     // Start is called before the first frame update
     void Start()
     {
         _sr = GetComponent<SpriteRenderer>();
+        //_pmObj = GameObject.Find("PuzzleManager");
+        //_puzzleManager = _pmObj.GetComponent<PuzzleManager>();
+        _collider = GetComponent<Collider2D>();
+        _collider.enabled = false;
     }
 
     // Update is called once per frame
@@ -35,45 +45,68 @@ public class CursorController : MonoBehaviour
 
     void MoveCursor()
     {
-        Vector3 direction = Vector3.zero;
+        Vector2 direction = Vector2.zero;
 
         if ((Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W)) && transform.localPosition.y < 7)
         {
-            if (_clicked == 1) direction = Vector3.up;
+            if (_clicked == 1) direction = Vector2.up;
             else
             {
                 _clicked = 1;
                 //フルーツ入れ替え
+                _moveY = 1;
+                _collider.enabled = true;
             }
         }
         else if ((Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S)) && transform.localPosition.y > 0)
         {
-            if (_clicked == 1) direction = Vector3.down;
+            if (_clicked == 1) direction = Vector2.down;
             else
             {
                 _clicked = 1;
                 //フルーツ入れ替え
+                _moveY = -1;
+                _collider.enabled = true;
             }
         }
         else if ((Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D)) && transform.localPosition.x < 9)
         {
-            if (_clicked == 1) direction = Vector3.right;
+            if (_clicked == 1) direction = Vector2.right;
             else
             {
                 _clicked = 1;
                 //フルーツ入れ替え
+                _moveX = 1;
+                _collider.enabled = true;
             }
         }
         else if ((Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A)) && transform.localPosition.x > 0)
         {
-            if (_clicked == 1) direction = Vector3.left;
+            if (_clicked == 1) direction = Vector2.left;
             else
             {
                 _clicked = 1;
                 //フルーツ入れ替え
+                _moveX = -1;
+                _collider.enabled = true;
             }
         }
 
-        transform.position +=  direction * _moveUnit;
+        var pos = (Vector2)this.transform.localPosition;
+        pos += direction * _moveUnit;
+        this.transform.localPosition = pos;
+        Physics2D.SyncTransforms();
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        int x = (int)this.transform.localPosition.x;
+        int y = (int)this.transform.localPosition.y;
+        Debug.Log("Hit x = " + x + ", y = " + y + ", moveX = " + _moveX + ", moveY = " + _moveY);
+        collision.GetComponent<FruitController>().MoveFruit(x, y, _moveX, _moveY);
+
+        _moveX = 0;
+        _moveY = 0;
+        if(_collider) _collider.enabled = false;
     }
 }
