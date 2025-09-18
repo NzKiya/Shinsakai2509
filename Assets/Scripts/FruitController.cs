@@ -8,19 +8,34 @@ public class FruitController : MonoBehaviour
     PuzzleManager _puzzleManager;
     //自身の配列の座標
     int _column = default;
-    int pbColumn
+    public int pbColumn
     {
         set { _column = value; }
         get { return _column; }
     }
     int _row = default;
-    int pbRow
+    public int pbRow
     {
         set { _row = value; }
         get { return _row; }
     }
+    /// <summary>
+    /// 入れ替えるフルーツ
+    /// </summary>
     GameObject _neighborFruit;
     [SerializeField] float _speed = 0.2f;
+    bool _isMatch = false;
+    public bool IsMatch
+    {
+        set { _isMatch = value; }
+        get { return _isMatch; }
+    }
+    Vector2 _previousPos = default;
+    public Vector2 PreviousPos
+    {
+        set { _previousPos = value; }
+        get { return _previousPos; }
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -53,6 +68,8 @@ public class FruitController : MonoBehaviour
 
     public void MoveFruit(int x, int y, int moveX, int moveY)
     {
+        _previousPos = new Vector2(_column, _row);
+
         if (moveY == 1)
         {
             if (y < 7)
@@ -89,6 +106,8 @@ public class FruitController : MonoBehaviour
                 _column -= 1;
             }
         }
+
+        Invoke("CheckMatch", 0.5f);
     }
 
     void SetFruitToArray()
@@ -100,5 +119,16 @@ public class FruitController : MonoBehaviour
     {
         _puzzleManager.PuzzleBoard[_column, _row] = null;
         _row -= 1;
+    }
+
+    void CheckMatch()
+    {
+        _puzzleManager.CheckMatch();
+    }
+
+    public void BackToPreviousPos()
+    {
+        _column = (int)_previousPos.x;
+        _row = (int)_previousPos.y;
     }
 }

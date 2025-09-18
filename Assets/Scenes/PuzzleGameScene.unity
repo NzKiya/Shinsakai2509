@@ -333,6 +333,8 @@ MonoBehaviour:
   - {fileID: 7675579992696002416, guid: efb9b6ea117846e4a937e56a0d5a08fb, type: 3}
   - {fileID: 2644196210311201462, guid: 4f56860f099225d46b1a8031534393c2, type: 3}
   - {fileID: 6505015922133101967, guid: b78da3e049170c34f9e8fb327658a428, type: 3}
+  _deleteTime: 0.15
+  _spawnTime: 0.3
   _cursorPrefab: {fileID: 9216761261480985659, guid: 75271f72cf0b4054fa3d0c67849d248d, type: 3}
 --- !u!4 &2045140443
 Transform:
