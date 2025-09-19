@@ -107,7 +107,7 @@ public class FruitController : MonoBehaviour
             }
         }
 
-        Invoke("CheckMatch", 0.3f);
+        _puzzleManager.Invoke("CheckMatch", 0.2f);
     }
 
     void SetFruitToArray()
@@ -119,11 +119,6 @@ public class FruitController : MonoBehaviour
     {
         _puzzleManager.PuzzleBoard[_column, _row] = null;
         _row -= 1;
-    }
-
-    void CheckMatch()
-    {
-        _puzzleManager.CheckMatch();
     }
 
     public void BackToPreviousPos()

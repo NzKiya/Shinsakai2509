@@ -37,12 +37,14 @@ public class PuzzleManager : MonoBehaviour
         get { return _isMoving; }
     }
 
+    CoinManager _coinManager;
 
     // Start is called before the first frame update
     void Start()
     {
         //_pool = GetComponent<FruitsPoolManager>();
         _scoreManager = GetComponent<ScoreManager>();
+        _coinManager = GetComponent<CoinManager>();
         ResetPuzzle();
         _cursor = Instantiate(_cursorPrefab, this.transform);
     }
@@ -133,6 +135,11 @@ public class PuzzleManager : MonoBehaviour
 
     public void CheckMatch()
     {
+        StartCoroutine(MatchSequence());
+    }
+
+    IEnumerator MatchSequence()
+    {
         for (int x = 0; x < _width; x++) 
         {
             for (int y = 0; y < _height; y++)
@@ -154,7 +161,13 @@ public class PuzzleManager : MonoBehaviour
 
         if (_deleteList.Count > 0)
         {
-            Invoke("DeleteFruits", _deleteTime);
+            _coinManager.Coin += CountMatchGroups();
+            //yield return new WaitForSeconds(_deleteTime); 
+            DeleteFruits();
+            yield return new WaitForSeconds(_spawnTime);
+            SpawnNewFruit();
+            yield return new WaitForSeconds(_deleteTime);
+            StartCoroutine(MatchSequence());
         }
         else
         {
@@ -163,7 +176,8 @@ public class PuzzleManager : MonoBehaviour
                 item.GetComponent<FruitController>().BackToPreviousPos();
             }
 
-            Invoke("CanMoveFruits", _deleteTime);
+            yield return new WaitForSeconds(_deleteTime);
+            CanMoveFruits();
         }
     }
 
@@ -173,13 +187,12 @@ public class PuzzleManager : MonoBehaviour
         {
             int fruitIndex = GetFruitIndex(item);
             Destroy(item);
-            //_pool.ReleaseFruit(item, fruitIndex);
             _puzzleBoard[(int)item.transform.localPosition.x, (int)item.transform.localPosition.y] = null;
             _scoreManager.Score[fruitIndex] += 1;
         }
 
         _deleteList.Clear();
-        Invoke("SpawnNewFruit", _spawnTime);
+        //yield return SpawnNewFruit();
     }
 
     void SpawnNewFruit()
@@ -192,7 +205,6 @@ public class PuzzleManager : MonoBehaviour
                 {
                     int r = Random.Range(0, Fruits.Length);
                     var fruit = Instantiate(Fruits[r], this.transform);
-                    //var fruit = _pool.GetFruit(r);
                     fruit.transform.localPosition = new Vector2(x, y + 0.3f);
                     _puzzleBoard[x, y] = fruit;
                 }
@@ -206,8 +218,6 @@ public class PuzzleManager : MonoBehaviour
 
             item.GetComponent<FruitController>().PreviousPos = (Vector2)item.transform.localPosition;
         }
-
-        Invoke("CheckMatch", _deleteTime);
     }
 
     void CanMoveFruits()
@@ -215,39 +225,60 @@ public class PuzzleManager : MonoBehaviour
         _isMoving = false;
     }
 
-    public void ShufflePuzzle()
+    int CountMatchGroups()
     {
-        _isMoving = true;
-        List<GameObject> candidate = new List<GameObject>();
+        bool[,] visited = new bool[_width, _height];
+        int groupCount = 0;
 
-        // フルーツの参照を削除
         for (int x = 0; x < _width; x++)
         {
             for (int y = 0; y < _height; y++)
             {
-                candidate.Add(_puzzleBoard[x, y]);
+                var fruit = _puzzleBoard[x, y];
+                if (fruit == null || visited[x, y]) continue;
 
-                if (_puzzleBoard[x, y] != null)
+                if (fruit.GetComponent<FruitController>().IsMatch)
                 {
-                    _puzzleBoard[x, y] = null;
+                    ExploreGroup(x, y, visited);
+                    groupCount++;
                 }
             }
         }
 
-        //フルーツの配置をランダムで決める
-        for (int x = 0; x < _width; x++)
+        return groupCount;
+    }
+
+    void ExploreGroup(int startX, int startY, bool[,] visited)
+    {
+        Queue<Vector2Int> queue = new();
+        queue.Enqueue(new Vector2Int(startX, startY));
+        visited[startX, startY] = true;
+
+        while (queue.Count > 0)
         {
-            for (int y = 0; y < _height; y++)
+            var pos = queue.Dequeue();
+            int x = pos.x;
+            int y = pos.y;
+
+            foreach (var dir in new[] {
+            new Vector2Int(1, 0), new Vector2Int(-1, 0),
+            new Vector2Int(0, 1), new Vector2Int(0, -1)
+        })
             {
-                int r = Random.Range(0, candidate.Count);
-                var fruit = candidate[r];
-                //var fruit = _pool.GetFruit(r);
-                fruit.transform.localPosition = new Vector2(x, y);
-                _puzzleBoard[x, y] = fruit;
-                candidate.RemoveAt(r);
+                int nx = x + dir.x;
+                int ny = y + dir.y;
+
+                if (nx >= 0 && nx < _width && ny >= 0 && ny < _height && !visited[nx, ny])
+                {
+                    var neighbor = _puzzleBoard[nx, ny];
+                    if (neighbor != null && neighbor.GetComponent<FruitController>().IsMatch)
+                    {
+                        visited[nx, ny] = true;
+                        queue.Enqueue(new Vector2Int(nx, ny));
+                    }
+                }
             }
         }
-
-        CheckMatch();
     }
+
 }

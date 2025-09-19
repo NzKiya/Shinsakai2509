@@ -16,6 +16,9 @@ public class CursorController : MonoBehaviour
     int _moveX = 0;
     int _moveY = 0;
 
+    GameObject _boardObj;
+    [SerializeField] LayerMask _boardLayer = default;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -23,6 +26,7 @@ public class CursorController : MonoBehaviour
         _puzzleManager = FindObjectOfType<PuzzleManager>();
         _collider = GetComponent<Collider2D>();
         _collider.enabled = false;
+        _boardObj = GameObject.Find("Board");
     }
 
     // Update is called once per frame
@@ -32,7 +36,12 @@ public class CursorController : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0))
         {
-            if (!_puzzleManager.IsMoving) _clicked = !_clicked;
+            Vector2 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            RaycastHit2D hit = Physics2D.Raycast(mouseWorldPos, Vector2.zero, 0f, _boardLayer);
+            if (hit.collider != null && hit.collider.gameObject == _boardObj)
+            {
+                if (!_puzzleManager.IsMoving) _clicked = !_clicked;
+            }
         }
 
         Color c = _clicked switch
