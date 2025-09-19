@@ -135,6 +135,11 @@ public class PuzzleManager : MonoBehaviour
 
     public void CheckMatch()
     {
+        StartCoroutine(MatchSequence());
+    }
+
+    IEnumerator MatchSequence()
+    {
         for (int x = 0; x < _width; x++) 
         {
             for (int y = 0; y < _height; y++)
@@ -157,7 +162,12 @@ public class PuzzleManager : MonoBehaviour
         if (_deleteList.Count > 0)
         {
             _coinManager.Coin += CountMatchGroups();
-            Invoke("DeleteFruits", _deleteTime);
+            //yield return new WaitForSeconds(_deleteTime); 
+            DeleteFruits();
+            yield return new WaitForSeconds(_spawnTime);
+            SpawnNewFruit();
+            yield return new WaitForSeconds(_deleteTime);
+            StartCoroutine(MatchSequence());
         }
         else
         {
@@ -166,7 +176,8 @@ public class PuzzleManager : MonoBehaviour
                 item.GetComponent<FruitController>().BackToPreviousPos();
             }
 
-            Invoke("CanMoveFruits", _deleteTime);
+            yield return new WaitForSeconds(_deleteTime);
+            CanMoveFruits();
         }
     }
 
@@ -181,7 +192,7 @@ public class PuzzleManager : MonoBehaviour
         }
 
         _deleteList.Clear();
-        Invoke("SpawnNewFruit", _spawnTime);
+        //yield return SpawnNewFruit();
     }
 
     void SpawnNewFruit()
@@ -207,8 +218,6 @@ public class PuzzleManager : MonoBehaviour
 
             item.GetComponent<FruitController>().PreviousPos = (Vector2)item.transform.localPosition;
         }
-
-        Invoke("CheckMatch", _deleteTime);
     }
 
     void CanMoveFruits()

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public class PuzzleShuffle : MonoBehaviour
@@ -10,11 +11,27 @@ public class PuzzleShuffle : MonoBehaviour
     int _width = 10;
     int _height = 8;
     [SerializeField] int _shufflePrice = 10;
+    Button _button = default;
 
     private void Start()
     {
         _puzzleManager = GetComponent<PuzzleManager>();
         _coinManager = GetComponent<CoinManager>();
+
+        var obj = GameObject.FindWithTag("Shuffle");
+        _button = obj.GetComponent<Button>();
+    }
+
+    private void Update()
+    {
+        if (_coinManager.Coin < _shufflePrice)
+        {
+            _button.enabled = false;
+        }
+        else
+        {
+            _button.enabled = true;
+        }
     }
 
     public void ShufflePuzzle()
