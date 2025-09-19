@@ -107,7 +107,7 @@ public class FruitController : MonoBehaviour
             }
         }
 
-        Invoke("CheckMatch", 0.5f);
+        Invoke("CheckMatch", 0.3f);
     }
 
     void SetFruitToArray()
