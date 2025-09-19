@@ -71,7 +71,6 @@ public class PuzzleManager : MonoBehaviour
                     ? candidate[Random.Range(0, candidate.Count)]
                     : Random.Range(0, Fruits.Length);
 
-                Debug.Log("r = " + r);
                 var fruit = Instantiate(Fruits[r], this.transform);
                 //var fruit = _pool.GetFruit(r);
                 fruit.transform.localPosition = new Vector2(x, y);
