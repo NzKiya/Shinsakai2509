@@ -135,7 +135,6 @@ public class PuzzleManager : MonoBehaviour
 
     public void CheckMatch()
     {
-        //Debug.Log("[0, 0] = " + _puzzleBoard[0, 0]);
         for (int x = 0; x < _width; x++) 
         {
             for (int y = 0; y < _height; y++)
@@ -165,7 +164,6 @@ public class PuzzleManager : MonoBehaviour
             foreach (var item in _puzzleBoard)
             {
                 item.GetComponent<FruitController>().BackToPreviousPos();
-                //Debug.Log("no match");
             }
 
             Invoke("CanMoveFruits", _deleteTime);
@@ -178,7 +176,6 @@ public class PuzzleManager : MonoBehaviour
         {
             int fruitIndex = GetFruitIndex(item);
             Destroy(item);
-            //_pool.ReleaseFruit(item, fruitIndex);
             _puzzleBoard[(int)item.transform.localPosition.x, (int)item.transform.localPosition.y] = null;
             _scoreManager.Score[fruitIndex] += 1;
         }
@@ -197,7 +194,6 @@ public class PuzzleManager : MonoBehaviour
                 {
                     int r = Random.Range(0, Fruits.Length);
                     var fruit = Instantiate(Fruits[r], this.transform);
-                    //var fruit = _pool.GetFruit(r);
                     fruit.transform.localPosition = new Vector2(x, y + 0.3f);
                     _puzzleBoard[x, y] = fruit;
                 }

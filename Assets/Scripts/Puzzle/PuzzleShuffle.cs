@@ -32,9 +32,8 @@ public class PuzzleShuffle : MonoBehaviour
             for (int y = 0; y < _height; y++)
             {
                 candidate.Add(_puzzleManager.PuzzleBoard[x, y]);
-
+                //_puzzleManager.PuzzleBoard[x, y].SetActive(false);
                 _puzzleManager.PuzzleBoard[x, y] = null;
-                //Debug.Log(x + ", " + y + " = " + _puzzleManager.PuzzleBoard[x, y]);
             }
         }
 
@@ -44,19 +43,23 @@ public class PuzzleShuffle : MonoBehaviour
             for (int y = 0; y < _height; y++)
             {
                 int r = Random.Range(0, candidate.Count);
-                //Debug.Log("random " + r);
                 var fruit = candidate[r];
-                //var fruit = _pool.GetFruit(r);
+                //fruit.GetComponent<FruitController>().PreviousPos = new Vector2(x, y);
+                //fruit.GetComponent<FruitController>().IsMatch = false;
                 fruit.transform.localPosition = new Vector2(x, y);
                 _puzzleManager.PuzzleBoard[x, y] = fruit;
-                //fruit.GetComponent<FruitController>().PreviousPos = new Vector2(x, y);
-                //fruit.SetActive(false);
-                //fruit.SetActive(true);
+
+                var fruitController = _puzzleManager.PuzzleBoard[x, y].GetComponent<FruitController>();
+                fruitController.PreviousPos = new Vector2(x, y);
+                fruitController.IsMatch = false;
+                fruitController.pbColumn = x;
+                fruitController.pbRow = y;
+                //_puzzleManager.PuzzleBoard[x, y].SetActive(true);
                 candidate.RemoveAt(r);
             }
         }
+        //Physics2D.SyncTransforms();
 
-
-        _puzzleManager.CheckMatch();
+        _puzzleManager.Invoke("CheckMatch", 0.3f);
     }
 }
