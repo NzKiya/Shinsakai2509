@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class CursorController : MonoBehaviour
 {
+    [SerializeField] Color _colorNormal = default;
+    [SerializeField] Color _colorSelected = default;
     int _moveUnit = 1;
     SpriteRenderer _sr = default;
     bool _clicked = false;
@@ -35,8 +37,8 @@ public class CursorController : MonoBehaviour
 
         Color c = _clicked switch
         {
-            true => new Color(0, 255, 0, 0.5f),
-            false => new Color(255, 255, 255, 0.5f)
+            true => _colorSelected,
+            false => _colorNormal
         };
 
         _sr.color = c;
@@ -105,6 +107,7 @@ public class CursorController : MonoBehaviour
         int y = (int)this.transform.localPosition.y;
         Debug.Log("Hit x = " + x + ", y = " + y + ", moveX = " + _moveX + ", moveY = " + _moveY);
         collision.GetComponent<FruitController>().MoveFruit(x, y, _moveX, _moveY);
+        //Invoke("CheckMatch", 0.3f);
 
         var pos = (Vector2)this.transform.localPosition;
         pos.x += _moveX * _moveUnit;
@@ -115,4 +118,9 @@ public class CursorController : MonoBehaviour
         _moveY = 0;
         if(_collider) _collider.enabled = false;
     }
+
+    //void CheckMatch()
+    //{
+    //    _puzzleManager.CheckMatch();
+    //}
 }

@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using static UnityEditor.Progress;
+using System.Linq;
 using Random = UnityEngine.Random;
 
 public class PuzzleManager : MonoBehaviour
@@ -11,6 +13,7 @@ public class PuzzleManager : MonoBehaviour
     [SerializeField] GameObject[] Fruits = new GameObject[5];
     int _width = 10;
     int _height = 8;
+    //FruitsPoolManager _pool = default;
 
     GameObject[,] _puzzleBoard = new GameObject[10, 8];
     public GameObject[,] PuzzleBoard
@@ -22,6 +25,8 @@ public class PuzzleManager : MonoBehaviour
     List<GameObject> _deleteList = new List<GameObject>();
     [SerializeField] float _deleteTime = 0.2f;
     [SerializeField] float _spawnTime = 1.2f;
+
+    ScoreManager _scoreManager;
 
     [SerializeField] GameObject _cursorPrefab;
     GameObject _cursor = default;
@@ -36,6 +41,8 @@ public class PuzzleManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        //_pool = GetComponent<FruitsPoolManager>();
+        _scoreManager = GetComponent<ScoreManager>();
         ResetPuzzle();
         _cursor = Instantiate(_cursorPrefab, this.transform);
     }
@@ -65,7 +72,9 @@ public class PuzzleManager : MonoBehaviour
                     : Random.Range(0, Fruits.Length);
 
                 var fruit = Instantiate(Fruits[r], this.transform);
+                //var fruit = _pool.GetFruit(r);
                 fruit.transform.localPosition = new Vector2(x, y);
+                fruit.GetComponent<FruitController>().PreviousPos = new Vector2(x, y);
                 _puzzleBoard[x, y] = fruit;
             }
         }
@@ -154,7 +163,7 @@ public class PuzzleManager : MonoBehaviour
                 item.GetComponent<FruitController>().BackToPreviousPos();
             }
 
-            Invoke("CanMoveFruits", 0.3f);
+            Invoke("CanMoveFruits", _deleteTime);
         }
     }
 
@@ -162,8 +171,11 @@ public class PuzzleManager : MonoBehaviour
     {
         foreach (var item in _deleteList)
         {
+            int fruitIndex = GetFruitIndex(item);
             Destroy(item);
+            //_pool.ReleaseFruit(item, fruitIndex);
             _puzzleBoard[(int)item.transform.localPosition.x, (int)item.transform.localPosition.y] = null;
+            _scoreManager.Score[fruitIndex] += 1;
         }
 
         _deleteList.Clear();
@@ -180,6 +192,7 @@ public class PuzzleManager : MonoBehaviour
                 {
                     int r = Random.Range(0, Fruits.Length);
                     var fruit = Instantiate(Fruits[r], this.transform);
+                    //var fruit = _pool.GetFruit(r);
                     fruit.transform.localPosition = new Vector2(x, y + 0.3f);
                     _puzzleBoard[x, y] = fruit;
                 }
@@ -200,5 +213,41 @@ public class PuzzleManager : MonoBehaviour
     void CanMoveFruits()
     {
         _isMoving = false;
+    }
+
+    public void ShufflePuzzle()
+    {
+        _isMoving = true;
+        List<GameObject> candidate = new List<GameObject>();
+
+        // フルーツの参照を削除
+        for (int x = 0; x < _width; x++)
+        {
+            for (int y = 0; y < _height; y++)
+            {
+                candidate.Add(_puzzleBoard[x, y]);
+
+                if (_puzzleBoard[x, y] != null)
+                {
+                    _puzzleBoard[x, y] = null;
+                }
+            }
+        }
+
+        //フルーツの配置をランダムで決める
+        for (int x = 0; x < _width; x++)
+        {
+            for (int y = 0; y < _height; y++)
+            {
+                int r = Random.Range(0, candidate.Count);
+                var fruit = candidate[r];
+                //var fruit = _pool.GetFruit(r);
+                fruit.transform.localPosition = new Vector2(x, y);
+                _puzzleBoard[x, y] = fruit;
+                candidate.RemoveAt(r);
+            }
+        }
+
+        CheckMatch();
     }
 }

@@ -9,6 +9,7 @@ TagManager:
   - Grape
   - Orange
   - Peach
+  - Score
   layers:
   - Default
   - TransparentFX
