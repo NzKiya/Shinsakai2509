@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ScoreManager : MonoBehaviour
+public class FruitsCounter : MonoBehaviour
 {
     int[] _score = new int[5];
     public int[] Score

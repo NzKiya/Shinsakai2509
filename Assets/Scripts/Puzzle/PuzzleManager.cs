@@ -26,7 +26,7 @@ public class PuzzleManager : MonoBehaviour
     [SerializeField] float _deleteTime = 0.2f;
     [SerializeField] float _spawnTime = 1.2f;
 
-    ScoreManager _scoreManager;
+    FruitsCounter _fruitsCounter;
 
     [SerializeField] GameObject _cursorPrefab;
     GameObject _cursor = default;
@@ -43,7 +43,7 @@ public class PuzzleManager : MonoBehaviour
     void Start()
     {
         //_pool = GetComponent<FruitsPoolManager>();
-        _scoreManager = GetComponent<ScoreManager>();
+        _fruitsCounter = GetComponent<FruitsCounter>();
         _coinManager = GetComponent<CoinManager>();
         ResetPuzzle();
         _cursor = Instantiate(_cursorPrefab, this.transform);
@@ -188,7 +188,7 @@ public class PuzzleManager : MonoBehaviour
             int fruitIndex = GetFruitIndex(item);
             Destroy(item);
             _puzzleBoard[(int)item.transform.localPosition.x, (int)item.transform.localPosition.y] = null;
-            _scoreManager.Score[fruitIndex] += 1;
+            _fruitsCounter.Score[fruitIndex] += 1;
         }
 
         _deleteList.Clear();
