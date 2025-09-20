@@ -13,7 +13,7 @@ public class FruitsCounter : MonoBehaviour
         get { return _fruits; }
     }
 
-    Text _scoreText = default;
+    //Text _scoreText = default;
 
 
     // Start is called before the first frame update

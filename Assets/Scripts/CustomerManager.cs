@@ -31,6 +31,8 @@ public class CustomerManager : MonoBehaviour
         if (_gameOver)
         {
             //Debug.Log("GameOver");
+            var sceneSwitcher = GetComponent<SceneSwitcher>();
+            sceneSwitcher.MoveToGameoverScene();
         }
 
         for (int i = 0; i < _customers.Count; i++)
@@ -53,6 +55,11 @@ public class CustomerManager : MonoBehaviour
             };
             _customers[i].GetComponent<CustomerController>().ShowOrder(showOrder);
 
+            Debug.Log(_customers.Count);
+            if (_customers.Count == 0)
+            {
+                _customers.Add(Instantiate(_customerObj));
+            }
         }
     }
 
