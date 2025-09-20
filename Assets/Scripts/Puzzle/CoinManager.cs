@@ -23,6 +23,7 @@ public class CoinManager : MonoBehaviour
 
     private void Update()
     {
-        _coinText.text = "Coin : " + _coin.ToString("D4");
+        //_coinText.text = "Coin : " + _coin.ToString("D3");
+        _coinText.text = _coin.ToString("D3");
     }
 }
