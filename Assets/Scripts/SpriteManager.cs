@@ -27,7 +27,7 @@ public class SpriteManager : MonoBehaviour
     public int ChoosePerson()
     {
         int s = Random.Range(0, _customerSprites.Length)/ 3 * 3 + 1;
-        Debug.Log(s);
+        //Debug.Log(s);
         return s;
     }
 

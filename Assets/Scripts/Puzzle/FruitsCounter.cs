@@ -5,11 +5,12 @@ using UnityEngine.UI;
 
 public class FruitsCounter : MonoBehaviour
 {
-    int[] _score = new int[5];
-    public int[] Score
+    [SerializeField] Text[] _texts = new Text[5];
+    int[] _fruits = new int[5];
+    public int[] Fruits
     {
-        set { _score = value; }
-        get { return _score; }
+        set { _fruits = value; }
+        get { return _fruits; }
     }
 
     Text _scoreText = default;
@@ -18,18 +19,22 @@ public class FruitsCounter : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        var obj = GameObject.FindGameObjectWithTag("Score");
-        _scoreText = obj.GetComponent<Text>();
+        //var obj = GameObject.FindGameObjectWithTag("Score");
+        //_scoreText = obj.GetComponent<Text>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        string score = "Apple : " + _score[0].ToString("D4")
-            + "\nBanana : " + _score[1].ToString("D4")
-            + "\nGrape : " + _score[2].ToString("D4")
-            + "\nOrange : " + _score[3].ToString("D4")
-            + "\nPeach : " + _score[4].ToString("D4");
-        _scoreText.text = score;
+        for(int i = 0; i < _fruits.Length; i++)
+        {
+            _texts[i].text = Fruits[i].ToString();
+        }
+        //string score = "Apple : " + _fruits[0].ToString("D4")
+        //    + "\nBanana : " + _fruits[1].ToString("D4")
+        //    + "\nGrape : " + _fruits[2].ToString("D4")
+        //    + "\nOrange : " + _fruits[3].ToString("D4")
+        //    + "\nPeach : " + _fruits[4].ToString("D4");
+        //_scoreText.text = score;
     }
 }

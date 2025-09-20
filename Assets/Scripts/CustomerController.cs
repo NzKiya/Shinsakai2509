@@ -13,9 +13,25 @@ public class CustomerController : MonoBehaviour
     int _sprite = default;
 
     List<int> _ordersIndex = new List<int>();
-    List<GameObject> _order = new List<GameObject>();
+    public List<int> OrdersIndex
+    {
+        get { return _ordersIndex; }
+        set { _ordersIndex = value; }
+    }
+    List<GameObject> _orders = new List<GameObject>();
+    public List<GameObject> Orders
+    {
+        get { return _orders; }
+        set { _orders = value; }
+    }
     OrderManager _orderManager = default;
-    
+    bool _ordered = false;
+    public bool Ordered
+    {
+        get { return _ordered; }
+        set { _ordered = value; }
+    }
+
 
     // Start is called before the first frame update
     void Awake()
@@ -31,8 +47,7 @@ public class CustomerController : MonoBehaviour
         {
             _ordersIndex.Add(Random.Range(0, 5));
             var juice = Instantiate(_spriteManager.Juice[_ordersIndex[i]], this.transform);
-            _order.Add(juice);
-
+            _orders.Add(juice);
             ShowOrder(false);
         }
     }
@@ -54,14 +69,31 @@ public class CustomerController : MonoBehaviour
         {
             _sr.sprite = _spriteManager.CustomerSprites[_sprite + 1];
         }
+
+        if (_orders.Count == 0)
+        {
+            _customerManager.Customers.Remove(this.gameObject);
+            Destroy(this.gameObject);
+            
+        }
     }
 
     public void ShowOrder(bool show)
     {
-        for (int i = 0; i < _order.Count; i++)
+        if (show && !_ordered)
+        {
+            //for (int i = 0; i < _orders.Count; i++)
+            //{
+            //    _orderManager.OrderList.Add(_orders[i]);
+            //    _orderManager.OrderNums.Add(_ordersIndex[i]);
+            //}
+            _ordered = true;
+        }
+        //ジュース表示
+        for (int i = 0; i < _orders.Count; i++)
         {
             Vector2 pos;
-            if (_order.Count == 1)
+            if (_orders.Count == 1)
             {
                 pos = new Vector2(2.25f, 0.25f);
             }
@@ -69,9 +101,10 @@ public class CustomerController : MonoBehaviour
             {
                 pos = new Vector2(2.25f, 0.85f - 1.15f * i);
             }
-            _order[i].transform.localPosition = pos;
+            _orders[i].transform.localPosition = pos;
         }
 
+        //注文中
         SpriteRenderer[] renderers = GetComponentsInChildren<SpriteRenderer>();
         foreach (var sr in renderers)
         {

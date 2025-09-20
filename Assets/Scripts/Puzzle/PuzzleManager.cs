@@ -188,7 +188,7 @@ public class PuzzleManager : MonoBehaviour
             int fruitIndex = GetFruitIndex(item);
             Destroy(item);
             _puzzleBoard[(int)item.transform.localPosition.x, (int)item.transform.localPosition.y] = null;
-            _fruitsCounter.Score[fruitIndex] += 1;
+            _fruitsCounter.Fruits[fruitIndex] += 1;
         }
 
         _deleteList.Clear();
