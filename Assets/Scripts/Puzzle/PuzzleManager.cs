@@ -3,8 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Tilemaps;
-using static UnityEditor.Progress;
 using System.Linq;
 using Random = UnityEngine.Random;
 

@@ -16,6 +16,11 @@ public class SceneSwitcher : MonoBehaviour
         StartCoroutine(LoadSceneCoroutine("PuzzleGameScene"));
     }
 
+    public void MoveToGameoverScene()
+    {
+        StartCoroutine(LoadSceneCoroutine("GameOverScene"));
+    }
+
     private IEnumerator LoadSceneCoroutine(string sceneName)
     {
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
