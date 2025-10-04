@@ -44,8 +44,11 @@ public class OrderManager : MonoBehaviour
         if (_fruitsCounter.Fruits[fruitIndex] >= _fruitsNeed)
         {
             //Debug.Log("right juice");
+            //foreach (var customer in _customerManager.Customers)
+            //{
+            //    if (customer.GetComponent<CustomerController>().Ordered)
+            //}
             foreach (var customer in _customerManager.Customers.Where(c => c.GetComponent<CustomerController>().Ordered))
-            //for ()
             {
                 var customerController = customer.GetComponent<CustomerController>();
                 for (int i = 0; i < customerController.OrdersIndex.Count; i++)
